@@ -12,6 +12,9 @@ class ModelGenerator(object):
         self.class_name = class_name + '_model'
         self.generated += '''class {0}(object):\n'''.format(self.class_name)  
 
+    def gen_init_string(self):
+        self.gen_def_string('__init__')
+        
     def gen_def_string(self, func_name):
         self.defs.append(func_name)
         self.generated += '''\tdef {0}(self):\n'''.format(func_name)  

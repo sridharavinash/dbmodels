@@ -7,7 +7,7 @@ def generate(db_type, db_name, db_user, dest):
     for x in p.get_table_names():
         m = ModelGenerator()
         m.gen_class_string(x[0])
-        m.gen_def_string('__init__')
+        m.gen_init_string()
         for n,t in p.get_column_names(x[0]):
                 m.gen_self_var(n)
         m.write_to_file(dest)
