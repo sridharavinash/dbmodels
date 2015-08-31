@@ -6,10 +6,13 @@ def generate(db_type, db_name, db_user, dest):
     p = dbModel.map_db_accessor(db_type, db_name, db_user)
     for x in p.get_table_names():
         m = ModelGenerator()
-        m.gen_class_string(x[0])
+        m.gen_class_string(x)
         m.gen_init_string()
-        for n,t in p.get_column_names(x[0]):
+        pk = p.get_primary_key(x)
+        print("Primary Key:",pk)
+        for n,t in p.get_column_names(x,):
                 m.gen_self_var(n)
+                
         m.write_to_file(dest)
         print("Generated:",m.class_name)
 
