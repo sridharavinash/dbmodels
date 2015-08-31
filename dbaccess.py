@@ -2,7 +2,6 @@ import psycopg2
 
 class PostgreSQL(object):
     def __init__(self, db_name):
-        "docstring"
         self.db = db_name
         self.conn_str = "dbname={0} user=postgres".format(db_name)
 
