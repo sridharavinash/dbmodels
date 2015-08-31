@@ -1,9 +1,9 @@
 import psycopg2
 
 class PostgreSQL(object):
-    def __init__(self, db_name):
+    def __init__(self, db_name, db_user):
         self.db = db_name
-        self.conn_str = "dbname={0} user=postgres".format(db_name)
+        self.conn_str = "dbname={0} user= {1}".format(db_name, db_user)
 
     def _connect(self):
         return psycopg2.connect(self.conn_str)

@@ -2,8 +2,8 @@ from dbmodels import dbModel
 from modelgenerator import ModelGenerator
 import sys, argparse
 
-def generate(db_type,db_name):
-    p = dbModel.map_db_accessor(db_type, db_name)
+def generate(db_type,db_name,db_user):
+    p = dbModel.map_db_accessor(db_type, db_name, db_user)
     for x in p.get_table_names():
         m = ModelGenerator()
         m.gen_class_string(x[0])
@@ -16,9 +16,10 @@ def generate(db_type,db_name):
 def main(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument("-t","--db_type", help="Type of databse, valid values are: psql,", required=True)
-    parser.add_argument("-n","--db_name", help="The name of the database", required=True)
+    parser.add_argument("-db","--db_name", help="The name of the database", required=True)
+    parser.add_argument("-u","--db_user", help="The user name of the database", required=True)
     args = parser.parse_args()
-    generate(args.db_type, args.db_name)
+    generate(args.db_type, args.db_name, args.db_user)
     
 if __name__ == "__main__":
     main(sys.argv)
