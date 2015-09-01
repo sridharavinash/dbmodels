@@ -3,7 +3,6 @@ import collections
 
 class ModelGenerator(object):
     def __init__(self):
-        "docstring"
         self.class_name = ''
         self.vars={}
         self.defs={}
@@ -11,13 +10,16 @@ class ModelGenerator(object):
         self.primary_key= ''
         self.imports={}
 
-    def generate(self, **kwargs):
+    def _parse_keywordarg(self, **kwargs):
         self.class_name = kwargs.get('class_name')
         self.imports = kwargs.get('imports')
         self.vars = kwargs.get('vars')
         defs = kwargs.get('defs')
         self.defs =  collections.OrderedDict(sorted(defs.items()))
         self.primary_key = kwargs.get('primary_key')
+        
+    def generate(self, **kwargs):
+        self._parse_keywordarg(**kwargs)
         self.gen_import_string()
         self.generated += '\n'
         self.gen_class_string()
