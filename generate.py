@@ -1,6 +1,5 @@
 from dbmodels import dbModel
 from modelgenerator import *
-from RepositoryGenerator import RepositoryGenerator
 import sys, argparse
 
 def generate(db_type, db_name, db_user, dest):
@@ -17,9 +16,12 @@ def generate(db_type, db_name, db_user, dest):
                    imports={},
                    dest = dest)
         print(m.generated)
+
         r = ModelGenerator()
+        rimports = {m.class_name:'*'}
+        rimports.update(p.imports)
         r.generate(primary_key = pk,
-                   imports={'psycopg2':'', m.class_name:'*'},
+                   imports=rimports,
                    vars = {'model':m.class_name+'()'},
                    defs = {'__init__':'',
                            'select':pk,
