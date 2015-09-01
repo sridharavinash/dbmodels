@@ -7,9 +7,10 @@ class ModelGenerator(object):
         self.vars=[]
         self.defs=[]
         self.generated = ''
+        self.primary_key= ''
 
     def gen_class_string(self, class_name):
-        self.class_name = class_name + '_model'
+        self.class_name = class_name 
         self.generated += '''class {0}(object):\n'''.format(self.class_name)  
 
     def gen_init_string(self):
@@ -19,9 +20,9 @@ class ModelGenerator(object):
         self.defs.append(func_name)
         self.generated += '''\tdef {0}(self):\n'''.format(func_name)  
     
-    def gen_self_var(self, var):
+    def gen_self_var(self, var, value=None):
         self.vars.append(var)
-        self.generated += '''\t\tself.{0} = None\n'''.format(var)
+        self.generated += '''\t\tself.{0} = {1}\n'''.format(var,value)
 
     def write_to_file(self, dest):
         full_dest = os.path.join(os.getcwd(),dest)

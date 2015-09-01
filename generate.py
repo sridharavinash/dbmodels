@@ -4,17 +4,23 @@ import sys, argparse
 
 def generate(db_type, db_name, db_user, dest):
     p = dbModel.map_db_accessor(db_type, db_name, db_user)
-    for x in p.get_table_names():
-        pk = p.get_primary_key(x)
-        print("Primary Key:",pk)
-
+    for table in p.get_table_names():
+        pk = p.get_primary_key(table)
         m = ModelGenerator()
-        m.gen_class_string(x)
+        m.primary_key = pk
+        m.class_name = table
+        m.gen_class_string(table+ '_model')
         m.gen_init_string()
-        for n,t in p.get_column_names(x,):
+        for n,t in p.get_column_names(table):
                 m.gen_self_var(n)
-                
         m.write_to_file(dest)
+
+        r = ModelGenerator()
+        r.gen_class_string(table + '_repository')
+        r.gen_init_string()
+        r.gen_self_var('model','{0}()'.format(m.class_name))
+        r.write_to_file(dest)
+        
 
         print("Generated:",m.class_name)
 
