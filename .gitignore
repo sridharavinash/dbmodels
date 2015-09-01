@@ -100,3 +100,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 *.py~
+
+#virtualenv python
+venv/

@@ -35,6 +35,8 @@ class PostgreSQL(object):
                  table_constraints.constraint_type = 'PRIMARY KEY' AND 
                  columns.table_name = (%s) ;'''
             cursor.execute(query,(table_name,))
-            
-            return cursor.fetchone()[0]
+            row = cursor.fetchone()
+            if row == None:
+                return ''
+            return row[0]
         

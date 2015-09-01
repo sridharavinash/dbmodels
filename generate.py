@@ -1,28 +1,33 @@
 from dbmodels import dbModel
-from modelgenerator import ModelGenerator
+from modelgenerator import *
+from RepositoryGenerator import RepositoryGenerator
 import sys, argparse
 
 def generate(db_type, db_name, db_user, dest):
     p = dbModel.map_db_accessor(db_type, db_name, db_user)
     for table in p.get_table_names():
+        print(table)
         pk = p.get_primary_key(table)
+        cols = { n:None for n,_ in p.get_column_names(table)}
         m = ModelGenerator()
-        m.primary_key = pk
-        m.class_name = table
-        m.gen_class_string(table+ '_model')
-        m.gen_init_string()
-        for n,t in p.get_column_names(table):
-                m.gen_self_var(n)
-        m.write_to_file(dest)
-
+        m.generate(primary_key = pk,
+                   vars = cols,
+                   defs = {'__init__':''},
+                   class_name = table + '_model',
+                   imports={},
+                   dest = dest)
+        print(m.generated)
         r = ModelGenerator()
-        r.gen_class_string(table + '_repository')
-        r.gen_init_string()
-        r.gen_self_var('model','{0}()'.format(m.class_name))
-        r.write_to_file(dest)
-        
+        r.generate(primary_key = pk,
+                   imports={'psycopg2':'', m.class_name:'*'},
+                   vars = {'model':m.class_name+'()'},
+                   defs = {'__init__':'',
+                           'select':pk,
+                           '_connect':''},
+                   class_name = table + '_repository',
+                   dest = dest)
+        print(r.generated)
 
-        print("Generated:",m.class_name)
 
 def main(argv):
     parser = argparse.ArgumentParser()
