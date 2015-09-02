@@ -15,7 +15,7 @@ class ModelGenerator(object):
         self.imports = kwargs.get('imports')
         self.vars = kwargs.get('vars')
         defs = kwargs.get('defs')
-        self.defs =  collections.OrderedDict(sorted(defs.items()))
+        self.defs = collections.OrderedDict(sorted(defs.items()))
         self.primary_key = kwargs.get('primary_key')
         
     def generate(self, **kwargs):
@@ -24,11 +24,12 @@ class ModelGenerator(object):
         self.generated += '\n'
         self.gen_class_string()
         for d in self.defs:
-            self.gen_def_string(d ,self.defs[d])
+            self.gen_def_string(d ,self.defs[d]['args'])
             if d == '__init__':
                 self.gen_self_var()
             else:
-                self.generated += '\t\tpass\n'
+                if self.defs[d]['body']:
+                    self.generated += self.defs[d]['body']
             self.generated += '\n'
 
         self.write_to_file(kwargs.get('dest'))

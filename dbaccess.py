@@ -9,6 +9,17 @@ class PostgreSQL(object):
     def _connect(self):
         return psycopg2.connect(self.conn_str)
 
+    def gen_conn_string_body(self):
+        body ="\t\treturn psycopg2.connect('{0}')\n".format(self.conn_str)
+        return body
+
+    def gen_query_body(self, query, qargs):
+        body = "\t\twith self.connect() as conn:\n"
+        body += "\t\t\tcursor = conn.cursor()\n"
+        body += """\t\t\tcursor.execute("{0}", ({1},))\n""".format(query,qargs)
+        body += "\t\t\treturn cursor\n"
+        return body
+        
     def get_column_names(self,table_name):
         with self._connect() as conn:
             cursor = conn.cursor()

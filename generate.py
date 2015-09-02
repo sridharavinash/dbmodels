@@ -11,7 +11,7 @@ def generate(db_type, db_name, db_user, dest):
         m = ModelGenerator()
         m.generate(primary_key = pk,
                    vars = cols,
-                   defs = {'__init__':''},
+                   defs = {'__init__':{'args':'','body':''}},
                    class_name = table + '_model',
                    imports={},
                    dest = dest)
@@ -20,12 +20,19 @@ def generate(db_type, db_name, db_user, dest):
         r = ModelGenerator()
         rimports = {m.class_name:'*'}
         rimports.update(p.imports)
+
         r.generate(primary_key = pk,
                    imports=rimports,
                    vars = {'model':m.class_name+'()'},
-                   defs = {'__init__':'',
-                           'select':pk,
-                           '_connect':''},
+                   defs = {'__init__':{'args':'',
+                                       'body':''},
+                           'connect':{'args':'',
+                                      'body': p.gen_conn_string_body()},
+                           'select':{'args':pk,
+                                     'body':p.gen_query_body("SELECT * FROM {0} WHERE {1} = (%s)".format(table, pk),pk)},
+                           'insert':{'args':'',
+                                     'body':'\t\tpass\n'}
+                           },
                    class_name = table + '_repository',
                    dest = dest)
         print(r.generated)
