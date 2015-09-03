@@ -1,4 +1,5 @@
 import psycopg2
+import inspect
 
 class PostgreSQL(object):
     def __init__(self, db_name, db_user):
@@ -12,6 +13,17 @@ class PostgreSQL(object):
     def gen_select_query(self,table,pk):
         q = "SELECT * FROM {0} WHERE {1} = (%s)".format(table,pk)
         return self.gen_query_body(q,pk)
+
+    def gen_insert_query(self):
+        body = "\t\twith self.connect() as conn:\n"
+        body += "\t\t\targs_dict = model.__dict__\n"
+        body += """\t\t\tcargs= (' + ','.join([a for a in args_dict]) + ')'\n"""
+        body += """\t\t\tvargs =  '(' + ','.join([a for a in args_dict.values()]) + ')'\n"""
+        body += "\t\t\tcursor = conn.cursor()\n"
+        body += """\t\t\tcursor.execute("INSERT INTO {0} {1} VALUES ({2})".format(table,cargs,vargs,))\n"""
+        body += "\t\t\treturn cursor\n"
+        return body
+
     
     def gen_conn_string_body(self):
         body ="\t\treturn psycopg2.connect('{0}')\n".format(self.conn_str)
