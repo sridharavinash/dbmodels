@@ -9,6 +9,10 @@ class PostgreSQL(object):
     def _connect(self):
         return psycopg2.connect(self.conn_str)
 
+    def gen_select_query(self,table,pk):
+        q = "SELECT * FROM {0} WHERE {1} = (%s)".format(table,pk)
+        return self.gen_query_body(q,pk)
+    
     def gen_conn_string_body(self):
         body ="\t\treturn psycopg2.connect('{0}')\n".format(self.conn_str)
         return body

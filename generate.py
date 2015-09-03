@@ -29,7 +29,7 @@ def generate(db_type, db_name, db_user, dest):
                            'connect':{'args':'',
                                       'body': p.gen_conn_string_body()},
                            'select':{'args':pk,
-                                     'body':p.gen_query_body("SELECT * FROM {0} WHERE {1} = (%s)".format(table, pk),pk)},
+                                     'body':p.gen_select_query(table, pk)},
                            'insert':{'args':'',
                                      'body':'\t\tpass\n'}
                            },
