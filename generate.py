@@ -30,8 +30,8 @@ def generate(db_type, db_name, db_user, dest):
                                       'body': p.gen_conn_string_body()},
                            'select':{'args':pk,
                                      'body':p.gen_select_query(table, pk)},
-                           'insert':{'args':', '.join([table, m.class_name]),
-                                     'body':p.gen_insert_query()}
+                           'insert':{'args':m.class_name,
+                                     'body':p.gen_insert_query(table, m.class_name)}
                            },
                    class_name = table + '_repository',
                    dest = dest)

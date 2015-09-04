@@ -14,13 +14,19 @@ class PostgreSQL(object):
         q = "SELECT * FROM {0} WHERE {1} = (%s)".format(table,pk)
         return self.gen_query_body(q,pk)
 
-    def gen_insert_query(self):
+    def gen_insert_query(self,table, model_name):
         body = "\t\twith self.connect() as conn:\n"
-        body += "\t\t\targs_dict = model.__dict__\n"
-        body += """\t\t\tcargs= (' + ','.join([a for a in args_dict]) + ')'\n"""
-        body += """\t\t\tvargs =  '(' + ','.join([a for a in args_dict.values()]) + ')'\n"""
+        body+= "\t\t\targs_tuple = [(z,{0}.__dict__[z],type({0}.__dict__[z]).__name__) for z in {0}.__dict__ if not z.startswith('__')]\n".format(model_name)
+        body += """\t\t\tcargs = []\n"""
+        body += """\t\t\tvargs = []\n"""
+        body += "\t\t\tfor col,val,t in args_tuple:\n"
+        body +="\t\t\t\tcargs.append(col)\n"
+        body += "\t\t\t\tif(t == 'str'):\n"
+        body += "\t\t\t\t\tvargs.append('{0}'.format(val))\n"
+        body +="\t\t\t\telse:\n"
+        body += "\t\t\t\t\tvargs.append(val)\n"
         body += "\t\t\tcursor = conn.cursor()\n"
-        body += """\t\t\tcursor.execute("INSERT INTO {0} {1} VALUES ({2})".format(table,cargs,vargs,))\n"""
+        body += """\t\t\tcursor.execute("INSERT INTO {0} {1} VALUES {2}".format(cargs,vargs,))\n""".format(table, '{0}', '{1}')
         body += "\t\t\treturn cursor\n"
         return body
 
